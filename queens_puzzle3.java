@@ -74,66 +74,180 @@
 // attackedRightDiagonals instead of sets. Note that arrays are indexed from 0 to their size and cannot
 // hold negative indexes.
 
-import java.util.HashSet;
-import java.util.Set;
+// * - - - - - - - 
+// - - - - * - - - 
+// - - - - - - - * 
+// - - - - - * - - 
+// - - * - - - - - 
+// - - - - - - * - 
+// - * - - - - - - 
+// - - - * - - - - 
 
-public class queens_puzzle {
-    private static final int SIZE = 8;
-    private static final boolean[][] chessboard = new boolean[SIZE][SIZE];
-    private static final Set<Integer> attackedColumns = new HashSet<>();
-    private static final Set<Integer> attackedLeftDiagonals = new HashSet<>();
-    private static final Set<Integer> attackedRightDiagonals = new HashSet<>();
-    private static int solutionsFound = 0;
+// * - - - - - - - 
+// - - - - - * - - 
+// - - - - - - - * 
+// - - * - - - - - 
+// - - - - - - * - 
+// - - - * - - - - 
+// - * - - - - - - 
+// - - - - * - - - 
 
-    public static void main(String[] args) {
-        putQueens(0);
-        System.out.println(solutionsFound);
-    }
+// * - - - - - - - 
+// - - - - - - * - 
+// - - - * - - - - 
+// - - - - - * - - 
+// - - - - - - - * 
+// - * - - - - - - 
+// - - - - * - - - 
+// - - * - - - - - 
 
-    private static void putQueens(int row) {
-        if (row == SIZE) {
-            printSolution();
+// * - - - - - - - 
+// - - - - - - * - 
+// - - - - * - - - 
+// - - - - - - - * 
+// - * - - - - - - 
+// - - - * - - - - 
+// - - - - - * - - 
+// - - * - - - - - 
+
+// - * - - - - - - 
+// - - - * - - - - 
+// - - - - - * - - 
+// - - - - - - - * 
+// - - * - - - - - 
+// * - - - - - - - 
+// - - - - - - * - 
+// - - - - * - - - 
+
+// - * - - - - - - 
+// - - - - * - - - 
+// - - - - - - * - 
+// * - - - - - - - 
+// - - * - - - - - 
+// - - - - - - - * 
+// - - - - - * - - 
+// - - - * - - - - 
+
+// - * - - - - - - 
+// - - - - * - - - 
+// - - - - - - * - 
+// - - - * - - - - 
+// * - - - - - - - 
+// - - - - - - - * 
+// - - - - - * - - 
+// - - * - - - - - 
+
+// - * - - - - - - 
+// - - - - - * - - 
+// * - - - - - - - 
+// - - - - - - * - 
+// - - - * - - - - 
+// - - - - - - - * 
+// - - * - - - - - 
+// - - - - * - - - 
+
+// - * - - - - - - 
+// - - - - - * - - 
+// - - - - - - - * 
+// - - * - - - - - 
+// * - - - - - - - 
+// - - - * - - - - 
+// - - - - - - * - 
+// - - - - * - - - 
+
+// - * - - - - - - 
+// - - - - - - * - 
+// - - * - - - - - 
+// - - - - - * - - 
+// - - - - - - - * 
+// - - - - * - - - 
+// * - - - - - - - 
+// - - - * - - - - 
+
+// - * - - - - - - 
+// - - - - - - * - 
+// - - - - * - - - 
+// - - - - - - - * 
+// * - - - - - - - 
+// - - - * - - - - 
+// - - - - - * - - 
+// - - * - - - - - 
+
+// - * - - - - - - 
+// - - - - - - - * 
+// - - - - - * - - 
+// * - - - - - - - 
+// - - * - - - - - 
+// - - - - * - - - 
+// - - - - - - * - 
+// - - - * - - - - 
+
+// - - * - - - - - 
+// * - - - - - - - 
+// - - - - - - * - 
+// - - - - * - - - 
+// - - - - - - - * 
+// - * - - - - - - 
+// - - - * - - - - 
+// - - - - - * - - 
+
+// - - * - - - - - 
+// - - - - * - - - 
+// - * - - - - - - 
+// - - - - - - - * 
+// * - - - - - - - 
+// - - - - - - * - 
+// - - - * - - - - 
+// - - - - - * - - 
+
+// - - * - - - - - 
+// - ...
+
+public class QueensPuzzle {
+    private int size = 8;
+    private int[] rows = new int[size];
+    private boolean[] cols = new boolean[size];
+    private boolean[] diagonals1 = new boolean[2 * size - 1]; 
+    private boolean[] diagonals2 = new boolean[2 * size - 1];
+    private int solutions = 0;
+
+    public void solve(int row) {
+        if (row == size) {
+            solutions++;
+            printBoard();
         } else {
-            for (int col = 0; col < SIZE; col++) {
-                if (canPlaceQueen(row, col)) {
-                    markAllAttackedPositions(row, col);
-                    putQueens(row + 1);
-                    unmarkAllAttackedPositions(row, col);
+            for (int col = 0; col < size; col++) {
+                if (!cols[col] && !diagonals1[row + col] && !diagonals2[row - col + size - 1]) {
+                    rows[row] = col;
+                    cols[col] = true;  
+                    diagonals1[row + col] = true;    
+                    diagonals2[row - col + size - 1] = true;  
+                    solve(row + 1);
+                    cols[col] = false;
+                    diagonals1[row + col] = false;
+                    diagonals2[row - col + size - 1] = false;  
                 }
             }
         }
     }
 
-    private static boolean canPlaceQueen(int row, int col) {
-        int leftDiagonal = col - row;
-        int rightDiagonal = col + row;
-        return !attackedColumns.contains(col)
-                && !attackedLeftDiagonals.contains(leftDiagonal)
-                && !attackedRightDiagonals.contains(rightDiagonal);
-    }
-
-    private static void markAllAttackedPositions(int row, int col) {
-        attackedColumns.add(col);
-        attackedLeftDiagonals.add(col - row);
-        attackedRightDiagonals.add(col + row);
-        chessboard[row][col] = true;
-    }
-
-    private static void unmarkAllAttackedPositions(int row, int col) {
-        attackedColumns.remove(col);
-        attackedLeftDiagonals.remove(col - row);
-        attackedRightDiagonals.remove(col + row);
-        chessboard[row][col] = false;
-    }
-
-    private static void printSolution() {
-        for (int row = 0; row < SIZE; row++) {
-            for (int col = 0; col < SIZE; col++) {
-                System.out.print(chessboard[row][col] ? "* " : "- ");
+    public void printBoard() {
+        for (int row = 0; row < size; row++) {
+            for (int col = 0; col < size; col++) {
+                if (cols[col] && rows[row] == col) {
+                    System.out.print("* ");
+                } else {
+                    System.out.print("- ");
+                }
             }
             System.out.println();
         }
         System.out.println();
-        solutionsFound++;
+    }
+
+    public static void main(String[] args) {
+        QueensPuzzle puzzle = new QueensPuzzle();
+        puzzle.solve(0);
+        System.out.println(puzzle.solutions);
     }
 }

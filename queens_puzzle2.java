@@ -74,12 +74,142 @@
 // attackedRightDiagonals instead of sets. Note that arrays are indexed from 0 to their size and cannot
 // hold negative indexes.
 
+// * - - - - - - - 
+// - - - - * - - - 
+// - - - - - - - * 
+// - - - - - * - - 
+// - - * - - - - - 
+// - - - - - - * - 
+// - * - - - - - - 
+// - - - * - - - - 
+
+// * - - - - - - - 
+// - - - - - * - - 
+// - - - - - - - * 
+// - - * - - - - - 
+// - - - - - - * - 
+// - - - * - - - - 
+// - * - - - - - - 
+// - - - - * - - - 
+
+// * - - - - - - - 
+// - - - - - - * - 
+// - - - * - - - - 
+// - - - - - * - - 
+// - - - - - - - * 
+// - * - - - - - - 
+// - - - - * - - - 
+// - - * - - - - - 
+
+// * - - - - - - - 
+// - - - - - - * - 
+// - - - - * - - - 
+// - - - - - - - * 
+// - * - - - - - - 
+// - - - * - - - - 
+// - - - - - * - - 
+// - - * - - - - - 
+
+// - * - - - - - - 
+// - - - * - - - - 
+// - - - - - * - - 
+// - - - - - - - * 
+// - - * - - - - - 
+// * - - - - - - - 
+// - - - - - - * - 
+// - - - - * - - - 
+
+// - * - - - - - - 
+// - - - - * - - - 
+// - - - - - - * - 
+// * - - - - - - - 
+// - - * - - - - - 
+// - - - - - - - * 
+// - - - - - * - - 
+// - - - * - - - - 
+
+// - * - - - - - - 
+// - - - - * - - - 
+// - - - - - - * - 
+// - - - * - - - - 
+// * - - - - - - - 
+// - - - - - - - * 
+// - - - - - * - - 
+// - - * - - - - - 
+
+// - * - - - - - - 
+// - - - - - * - - 
+// * - - - - - - - 
+// - - - - - - * - 
+// - - - * - - - - 
+// - - - - - - - * 
+// - - * - - - - - 
+// - - - - * - - - 
+
+// - * - - - - - - 
+// - - - - - * - - 
+// - - - - - - - * 
+// - - * - - - - - 
+// * - - - - - - - 
+// - - - * - - - - 
+// - - - - - - * - 
+// - - - - * - - - 
+
+// - * - - - - - - 
+// - - - - - - * - 
+// - - * - - - - - 
+// - - - - - * - - 
+// - - - - - - - * 
+// - - - - * - - - 
+// * - - - - - - - 
+// - - - * - - - - 
+
+// - * - - - - - - 
+// - - - - - - * - 
+// - - - - * - - - 
+// - - - - - - - * 
+// * - - - - - - - 
+// - - - * - - - - 
+// - - - - - * - - 
+// - - * - - - - - 
+
+// - * - - - - - - 
+// - - - - - - - * 
+// - - - - - * - - 
+// * - - - - - - - 
+// - - * - - - - - 
+// - - - - * - - - 
+// - - - - - - * - 
+// - - - * - - - - 
+
+// - - * - - - - - 
+// * - - - - - - - 
+// - - - - - - * - 
+// - - - - * - - - 
+// - - - - - - - * 
+// - * - - - - - - 
+// - - - * - - - - 
+// - - - - - * - - 
+
+// - - * - - - - - 
+// - - - - * - - - 
+// - * - - - - - - 
+// - - - - - - - * 
+// * - - - - - - - 
+// - - - - - - * - 
+// - - - * - - - - 
+// - - - - - * - - 
+
+// - - * - - - - - 
+// - ...
+
 import java.util.HashSet;
 import java.util.Set;
 
-public class queens_puzzle {
+public class EightQueensPuzzle {
     private static final int SIZE = 8;
     private static final boolean[][] chessboard = new boolean[SIZE][SIZE];
+    private static final Set<Integer> attackedRows = new HashSet<>();
     private static final Set<Integer> attackedColumns = new HashSet<>();
     private static final Set<Integer> attackedLeftDiagonals = new HashSet<>();
     private static final Set<Integer> attackedRightDiagonals = new HashSet<>();
@@ -105,35 +235,39 @@ public class queens_puzzle {
     }
 
     private static boolean canPlaceQueen(int row, int col) {
-        int leftDiagonal = col - row;
-        int rightDiagonal = col + row;
-        return !attackedColumns.contains(col)
-                && !attackedLeftDiagonals.contains(leftDiagonal)
-                && !attackedRightDiagonals.contains(rightDiagonal);
+        boolean positionOccupied =
+                attackedRows.contains(row) ||
+                        attackedColumns.contains(col) ||
+                        attackedLeftDiagonals.contains(col - row) ||
+                        attackedRightDiagonals.contains(row + col);
+        return !positionOccupied;
     }
 
     private static void markAllAttackedPositions(int row, int col) {
+        attackedRows.add(row);
         attackedColumns.add(col);
         attackedLeftDiagonals.add(col - row);
-        attackedRightDiagonals.add(col + row);
+        attackedRightDiagonals.add(row + col);
         chessboard[row][col] = true;
     }
 
     private static void unmarkAllAttackedPositions(int row, int col) {
+        attackedRows.remove(row);
         attackedColumns.remove(col);
         attackedLeftDiagonals.remove(col - row);
-        attackedRightDiagonals.remove(col + row);
+        attackedRightDiagonals.remove(row + col);
         chessboard[row][col] = false;
     }
 
     private static void printSolution() {
         for (int row = 0; row < SIZE; row++) {
-            for (int col = 0; col < SIZE; col++) {
+            for (int col = 0; col < SIZE; col++)
                 System.out.print(chessboard[row][col] ? "* " : "- ");
-            }
             System.out.println();
         }
         System.out.println();
         solutionsFound++;
     }
 }
+
+
