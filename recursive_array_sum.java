@@ -21,16 +21,16 @@ public class RecursiveArraySum {
 //        for (int i = 0; i < input.length; i++) {
 //            numbers[i] = Integer.parseInt(input[i]);
 
-        int[] numbers = parseArray(input, 0, new int[input.length]);
-        int sum = sum(numbers, 0);
+        int[] numbers = parseArray(input, 0, new int[input.length]); // recursion - parseArray
+        int sum = sum(numbers, 0); // recursion - sum
         System.out.println(sum);
     }
 
-    private static int[] parseArray(String[] input, int index, int[] numbers) {
-        if (index == input.length) {
+    private static int[] parseArray(String[] input, int index, int[] numbers) { 
+        if (index == input.length) { 
             return numbers;
         }
-        numbers[index] = Integer.parseInt(input[index]);
+        numbers[index] = Integer.parseInt(input[index]); 
         return parseArray(input, index + 1, numbers);
     }
 
