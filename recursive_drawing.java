@@ -48,4 +48,3 @@ public class RecursiveDrawing {
         return sb.toString();
     }
 }
-
