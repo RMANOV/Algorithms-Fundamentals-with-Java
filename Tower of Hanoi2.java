@@ -3,13 +3,9 @@
 // In this problem, you have three rods (let’s call them source, destination, and spare). Initially, there are n disks, all
 // placed on the source rod like in the picture below:
 // Your objective is to move all disks from the source rod to the destination rod. There are several rules:
-// © SoftUni – about.softuni.bg. Copyrighted document. Unauthorized copy, reproduction or use is not permitted.
-
-// Follow us: Page 3 of 9
 // 1) Only one disk can be moved at a time
 // 2) Only the topmost disk on a rod can be moved
-// 3) A disk can only be placed on top of a larger disk or on an empty rod
-
+// 3) A disk can only be placed on top of a larger disk or on an empty rods
 // Step 1. Choose Appropriate Data Structures
 // First, we need to decide how to model the problem in our program. The size of a disk can be represented by an integer
 // number – the larger the number, the larger the disk.
@@ -137,4 +133,3 @@ public class TowerOfHanoi {
         System.out.println();
     }
 }
-
