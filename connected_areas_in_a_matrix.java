@@ -32,18 +32,7 @@
 // • You can create a class to hold info about a connected area (its position and size). Additionally, you can
 // implement Comparable and store all areas found in a TreeSet.
 
-// a - get the number of rows and columns from the console
-// b - create a matrix with the given rows and columns
-// 1. Create a class to hold info about a connected area
-// 2. Implement Comparable and override the compareTo method
-// 3. Create a method that finds the first traversable cell which hasn’t been visited
-// 4. Create a method that finds the size of the connected area
-// 5. Create a method that finds the connected areas
-// 6. Create a method that prints the connected areas
-// 7. Create a method that checks if a cell is traversable
-// 8. Create a method that checks if a cell is visited
-// 9. Create a method that checks if a cell is in the matrix
-// 10. Create a method that checks if a cell is equal to a given character
+
 
 
 
@@ -111,8 +100,8 @@ public class Main {
             }
         }
     }
-
-    private static int dfs(int row, int col) {
+    // depth-first search
+    private static int dfs(int row, int col) { 
         if (row < 0 || row >= rows || col < 0 || col >= cols || visited[row][col] || matrix[row][col] != '-') {
             return 0;
         }
