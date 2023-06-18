@@ -5,9 +5,6 @@
 // managed employees. Managers cannot manage directly or indirectly (transitively) themselves. Some employees
 // might have no manager (like the big boss). See a sample hierarchy in a company along with the salaries computed
 // following the above-described rule:
-// © SoftUni – about.softuni.bg. Copyrighted document. Unauthorized copy, reproduction or use is not permitted.
-
-// Follow us: Page 5 of 10
 // In the above example, employees 0 and 3 are regular employees and take salary 1. All others are managers and take
 // the sum of the salaries of their directly managed employees. For example, manager 1 takes salary 3 + 2 + 1 = 6 (sum
 // of the salaries of employees 2, 5 and 0). In the above example employees, 4 and 1 have no manager.
@@ -31,50 +28,75 @@
 // Examples
 // Input
 // 5
+// 1. Read the number of employees N.
+// 2. Create a graf with N nodes.
+// 3. Read the hierarchy of each employee and store it in the graf.
+// 4. Create an variable to store the total salary.
+// 5. For each employee calculate their salary and add it to the total salary.
+// * if there is a cycle in the graf - calculate the salary of the employee only once.
+// * if the salary of the employee is already calculated - return it.
+// * if the employee has no subordinates - their salary is 1.
+// * if the employee has subordinates - their salary is the sum of the salaries of their subordinates.
+// 6. Print the total salary.
+
 
 
 import java.util.*;
 
 public class Salaries {
-
     private static int[] salaries; // array to store the salaries of each employee
-    private static boolean[][] subordinates; // 2D array to store the hierarchy of the employees
+    private static List<Integer>[] subordinates; // adjacency list to store the subordinates of each employee
+    private static boolean[] visited; // array to mark visited nodes during DFS traversal
 
     public static void main(String[] args) {
         Scanner scanner = new Scanner(System.in);
         int N = scanner.nextInt(); // read the number of employees
         scanner.nextLine();
 
-        subordinates = new boolean[N][N]; // initialize the 2D array with the size of N
-        salaries = new int[N]; // initialize the salaries array with the size of N
+        subordinates = new ArrayList[N]; // initialize the adjacency list
+        salaries = new int[N]; // initialize the salaries array
+        visited = new boolean[N]; // initialize the visited array
+        int[] managersCount = new int[N]; // array to store the number of managers for each employee
 
         for (int i = 0; i < N; i++) {
-            String line = scanner.nextLine(); // read the hierarchy of the i-th employee
+            subordinates[i] = new ArrayList<>(); // initialize the subordinates list for each employee
+        }
+
+        for (int i = 0; i < N; i++) {
+            String line = scanner.nextLine();
             for (int j = 0; j < N; j++) {
-                subordinates[i][j] = (line.charAt(j) == 'Y'); // store the hierarchy of the i-th employee
+                if (line.charAt(j) == 'Y') {
+                    subordinates[i].add(j); // add the subordinate to the list of the current employee
+                    managersCount[j]++; // increment the number of managers for the subordinate
+                }
             }
         }
 
-        int totalSalary = 0; // initialize the total salary to 0
+        List<Integer> sources = new ArrayList<>(); // list to store the sources (employees with no managers)
         for (int i = 0; i < N; i++) {
-            totalSalary += getSalary(i); // calculate the salary of the i-th employee and add it to the total salary
+            if (managersCount[i] == 0) {
+                sources.add(i); // add the employee to the sources list if they have no managers
+            }
         }
 
+        for (int source : sources) {
+            dfs(source); // perform DFS traversal starting from each source
+        }
+
+        int totalSalary = Arrays.stream(salaries).sum(); // calculate the total salary
         System.out.println(totalSalary); // print the total salary
     }
 
-    private static int getSalary(int employee) {
-        if (salaries[employee] > 0) { // if the salary of the employee is already calculated, return it
-            return salaries[employee];
+    private static void dfs(int node) {
+        if (visited[node]) {
+            return; // if the node is already visited, return
         }
-        for (int i = 0; i < subordinates.length; i++) {
-            if (subordinates[employee][i]) { // if the i-th employee is a subordinate of the employee, add their salary to the employee's salary
-                salaries[employee] += getSalary(i);
-            }
+        visited[node] = true; // mark the node as visited
+        int salarySum = 0;
+        for (int child : subordinates[node]) {
+            dfs(child); // perform DFS traversal on the child
+            salarySum += salaries[child]; // add the salary of the child to the salary sum
         }
-        if (salaries[employee] == 0) { // if the employee has no subordinates, their salary is 1
-            salaries[employee] = 1;
-        }
-        return salaries[employee]; // return the salary of the employee
+        salaries[node] = (salarySum == 0) ? 1 : salarySum; // calculate the salary of the current employee
     }
 }
