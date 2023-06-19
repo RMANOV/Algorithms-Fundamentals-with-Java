@@ -44,7 +44,7 @@
 import java.util.*;
 
 public class Salaries {
-    private static int[] salaries; // array to store the salaries of each employee
+    private static long[] salaries; // array to store the salaries of each employee
     private static List<Integer>[] subordinates; // adjacency list to store the subordinates of each employee
     private static boolean[] visited; // array to mark visited nodes during DFS traversal
 
@@ -54,7 +54,7 @@ public class Salaries {
         scanner.nextLine();
 
         subordinates = new ArrayList[N]; // initialize the adjacency list
-        salaries = new int[N]; // initialize the salaries array
+        salaries = new long[N]; // initialize the salaries array
         visited = new boolean[N]; // initialize the visited array
         int[] managersCount = new int[N]; // array to store the number of managers for each employee
 
@@ -83,7 +83,7 @@ public class Salaries {
             dfs(source); // perform DFS traversal starting from each source
         }
 
-        int totalSalary = Arrays.stream(salaries).sum(); // calculate the total salary
+        long totalSalary = Arrays.stream(salaries).sum(); // calculate the total salary
         System.out.println(totalSalary); // print the total salary
     }
 
@@ -92,7 +92,7 @@ public class Salaries {
             return; // if the node is already visited, return
         }
         visited[node] = true; // mark the node as visited
-        int salarySum = 0;
+        long salarySum = 0;
         for (int child : subordinates[node]) {
             dfs(child); // perform DFS traversal on the child
             salarySum += salaries[child]; // add the salary of the child to the salary sum
