@@ -41,9 +41,10 @@
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.io.IOException;
-import java.util.LinkedList;
-import java.util.Queue;
-import java.util.Stack;
+import java.math.BigInteger;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.PriorityQueue;
 
 public class Gateways {
     public static void main(String[] args) throws IOException {
@@ -51,103 +52,136 @@ public class Gateways {
         BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
 
         // Read the number of gateways from the console
-        int gateways = Integer.parseInt(reader.readLine());
+        BigInteger gateways = new BigInteger(reader.readLine());
         // Check if the number of gateways is valid
-        if (gateways <= 0) {
+        if (gateways.compareTo(BigInteger.ZERO) <= 0) {
             // System.out.println("Invalid number of gateways. It must be a positive integer.");
             return;
         }
 
         // Read the number of connections from the console
-        int connections = Integer.parseInt(reader.readLine());
+        BigInteger connections = new BigInteger(reader.readLine());
         // Check if the number of connections is valid
-        if (connections < 0) {
+        if (connections.compareTo(BigInteger.ZERO) < 0) {
             // System.out.println("Invalid number of connections. It cannot be negative.");
             return;
         }
 
-        // Create a matrix to store the connections between the gateways
-        int[][] matrix = new int[gateways][gateways];
-        // Read the connections from the console and store them in the matrix
-        for (int i = 0; i < connections; i++) {
+        // Create an adjacency list to store the connections between the gateways
+        ArrayList<ArrayList<Edge>> adjList = new ArrayList<>();
+        for (int i = 0; i < gateways.intValue(); i++) {
+            adjList.add(new ArrayList<>());
+        }
+
+        // Read the connections from the console and store them in the adjacency list
+        for (int i = 0; i < connections.intValue(); i++) {
             String[] input = reader.readLine().split(" ");
-            int from = Integer.parseInt(input[0]);
-            int to = Integer.parseInt(input[1]);
+            int from = Integer.parseInt(input[0]) - 1;
+            int to = Integer.parseInt(input[1]) - 1;
+            int weight = 1;
 
             // Check if the gateway numbers are valid
-            if (from <= 0 || to <= 0 || from > gateways || to > gateways) {
+            if (from < 0 || to < 0 || from >= gateways.intValue() || to >= gateways.intValue()) {
                 // System.out.println("Invalid gateway number. It should be between 1 and " + gateways);
                 return;
             }
 
-            // Store the connection in the matrix
-            matrix[from - 1][to - 1] = 1;
-            matrix[to - 1][from - 1] = 1;
+            // Add the connection to the adjacency list
+            adjList.get(from).add(new Edge(to, weight));
+            adjList.get(to).add(new Edge(from, weight));
         }
 
         // Read the start and end gateways from the console
-        int start = Integer.parseInt(reader.readLine());
-        int end = Integer.parseInt(reader.readLine());
+        int start = Integer.parseInt(reader.readLine()) - 1;
+        int end = Integer.parseInt(reader.readLine()) - 1;
 
         // Check if the start and end gateways are valid
-        if (start <= 0 || end <= 0 || start > gateways || end > gateways) {
+        if (start < 0 || end < 0 || start >= gateways.intValue() || end >= gateways.intValue()) {
             // System.out.println("Invalid start or end gateway. It should be between 1 and " + gateways);
             return;
         }
 
-        // Create an array to store the parent of each gateway
-        int[] parents = new int[gateways];
-        // Create a boolean array to keep track of visited gateways
-        boolean[] visited = new boolean[gateways];
-        // Initialize the parent array with -1
-        for (int i = 0; i < gateways; i++) {
-            parents[i] = -1;
-        }
+        // Create an array to store the distances from the start gateway to each gateway
+        BigInteger[] distances = new BigInteger[gateways.intValue()];
+        Arrays.fill(distances, BigInteger.valueOf(Integer.MAX_VALUE));
+        distances[start] = BigInteger.ZERO;
 
-        // Create a queue to perform a breadth-first search
-        Queue<Integer> queue = new LinkedList<>();
-        // Add the start gateway to the queue
-        queue.add(start - 1);
-        // Mark the start gateway as visited
-        visited[start - 1] = true;
-        // Set the parent of the start gateway to -1
-        parents[start - 1] = -1;
+        // Create a priority queue to store the gateways to be processed
+        PriorityQueue<Node> pq = new PriorityQueue<>();
+        pq.add(new Node(start, BigInteger.ZERO));
 
-        // Perform a breadth-first search
-        while (!queue.isEmpty()) {
-            // Get the next gateway from the queue
-            int current = queue.poll();
-            // Check all the gateways connected to the current gateway
-            for (int i = 0; i < gateways; i++) {
-                if (matrix[current][i] == 1 && !visited[i]) {
-                    // If the gateway is connected to the current gateway and has not been visited
-                    // yet,
-                    // add it to the queue, mark it as visited, and set its parent to the current
-                    // gateway
-                    queue.add(i);
-                    visited[i] = true;
-                    parents[i] = current;
+        // Perform Dijkstra's algorithm
+        while (!pq.isEmpty()) {
+            Node node = pq.poll();
+            int u = node.u;
+            BigInteger dist = node.dist;
+
+            if (dist.compareTo(distances[u]) > 0) {
+                continue;
+            }
+
+            for (Edge edge : adjList.get(u)) {
+                int v = edge.v;
+                int weight = edge.weight;
+
+                if (distances[u].add(BigInteger.valueOf(weight)).compareTo(distances[v]) < 0) {
+                    distances[v] = distances[u].add(BigInteger.valueOf(weight));
+                    pq.add(new Node(v, distances[v]));
                 }
             }
         }
 
         // If there is no path from the start to the end gateway, print "no path"
-        if (parents[end - 1] == -1) {
+        if (distances[end].equals(BigInteger.valueOf(Integer.MAX_VALUE))) {
+            return;
             // System.out.println("no path");
         } else {
-            // Otherwise, create a stack to store the path from the end to the start gateway
-            Stack<Integer> stack = new Stack<>();
-            int current = end - 1;
-            // Traverse the parent array from the end gateway to the start gateway and push
-            // the gateways onto the stack
-            while (current != -1) {
-                stack.push(current + 1);
-                current = parents[current];
+            // Otherwise, create an array to store the path from the start to the end gateway
+            ArrayList<Integer> path = new ArrayList<>();
+            int current = end;
+            // Traverse the distances array from the end gateway to the start gateway and add
+            // the gateways to the path
+            while (current != start) {
+                path.add(current + 1);
+                for (Edge edge : adjList.get(current)) {
+                    int v = edge.v;
+                    int weight = edge.weight;
+                    if (distances[v].add(BigInteger.valueOf(weight)).equals(distances[current])) {
+                        current = v;
+                        break;
+                    }
+                }
             }
-            // Pop the gateways from the stack and print them to the console
-            while (!stack.isEmpty()) {
-                System.out.print(stack.pop() + " ");
+            path.add(start + 1);
+
+            // Reverse the path and print it to the console
+            for (int i = path.size() - 1; i >= 0; i--) {
+                System.out.print(path.get(i) + " ");
             }
+        }
+    }
+
+    static class Edge {
+        int v;
+        int weight;
+
+        public Edge(int v, int weight) {
+            this.v = v;
+            this.weight = weight;
+        }
+    }
+
+    static class Node implements Comparable<Node> {
+        int u;
+        BigInteger dist;
+
+        public Node(int u, BigInteger dist) {
+            this.u = u;
+            this.dist = dist;
+        }
+
+        public int compareTo(Node other) {
+            return dist.compareTo(other.dist);
         }
     }
 }
