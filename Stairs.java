@@ -17,7 +17,7 @@
 // 3	3	There are three ways to climb 3 steps. You can either climb 1 step three times, climb 2 steps and then 1 step or climb 1 step and then 2 steps.
 // 8    34 There are 34 ways to climb 8 steps.
 
-// Added Java code to solve the Stairs problem
+// Solution: Stairs.java
 // The code reads the number of steps from the console and calculates the number of ways to climb the stairs
 // The solution uses an array to store the number of ways to climb each step
 // The array is initialized with 0s and the first two elements are set to 1
