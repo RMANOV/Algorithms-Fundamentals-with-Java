@@ -43,48 +43,64 @@
 
 // Use BigInteger instead of int
 // Use dynamic programming
+// Use BufferedReader and BufferedWriter instead of Scanner and System.out
 
-
-import java.util.Scanner;
+import java.io.*;
 import java.math.BigInteger;
-import java.util.ArrayList;
-import java.util.Collections;
+import java.util.StringTokenizer;
 
 public class Climbing {
-    public static void main(String[] args) {
-        Scanner scanner = new Scanner(System.in);
-        int rows = scanner.nextInt();
-        int cols = scanner.nextInt();
+    public static void main(String[] args) throws IOException {
+        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+        BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(System.out));
 
+        // read the number of rows and columns
+        int rows = Integer.parseInt(br.readLine().trim());
+        int cols = Integer.parseInt(br.readLine().trim());
+
+        // initialize the matrix, dp and path arrays
         BigInteger[][] matrix = new BigInteger[rows][cols];
         BigInteger[][] dp = new BigInteger[rows][cols];
-        String[][] path = new String[rows][cols];
+        StringBuilder[][] path = new StringBuilder[rows][cols];
 
+        // fill the matrix, dp and path arrays
         for (int row = rows - 1; row >= 0; row--) {
+            StringTokenizer st = new StringTokenizer(br.readLine());
             for (int col = cols - 1; col >= 0; col--) {
-                matrix[row][col] = scanner.nextBigInteger();
+                matrix[row][col] = new BigInteger(st.nextToken());
                 if (row == rows - 1 && col == cols - 1) {
+                    // if we are at the bottom right corner, set the dp value to the matrix value
                     dp[row][col] = matrix[row][col];
-                    path[row][col] = matrix[row][col].toString();
+                    // set the path value to the matrix value
+                    path[row][col] = new StringBuilder(matrix[row][col].toString());
                 } else if (row == rows - 1) {
+                    // if we are at the bottom row, set the dp value to the sum of the current matrix value and the dp value of the cell to the right
                     dp[row][col] = matrix[row][col].add(dp[row][col + 1]);
-                    path[row][col] = matrix[row][col] + " " + path[row][col + 1];
+                    // set the path value to the matrix value followed by the path value of the cell to the right
+                    path[row][col] = new StringBuilder(matrix[row][col] + " ").append(path[row][col + 1]);
                 } else if (col == cols - 1) {
+                    // if we are at the rightmost column, set the dp value to the sum of the current matrix value and the dp value of the cell below
                     dp[row][col] = matrix[row][col].add(dp[row + 1][col]);
-                    path[row][col] = matrix[row][col] + " " + path[row + 1][col];
+                    // set the path value to the matrix value followed by the path value of the cell below
+                    path[row][col] = new StringBuilder(matrix[row][col] + " ").append(path[row + 1][col]);
                 } else {
+                    // if we are not at the bottom row or rightmost column, choose the maximum dp value between the cell below and the cell to the right
                     if (dp[row + 1][col].compareTo(dp[row][col + 1]) > 0) {
                         dp[row][col] = matrix[row][col].add(dp[row + 1][col]);
-                        path[row][col] = matrix[row][col] + " " + path[row + 1][col];
+                        path[row][col] = new StringBuilder(matrix[row][col] + " ").append(path[row + 1][col]);
                     } else {
                         dp[row][col] = matrix[row][col].add(dp[row][col + 1]);
-                        path[row][col] = matrix[row][col] + " " + path[row][col + 1];
+                        path[row][col] = new StringBuilder(matrix[row][col] + " ").append(path[row][col + 1]);
                     }
                 }
             }
         }
 
-        System.out.println(dp[0][0]);
-        System.out.println(path[0][0]);
+        // write the highest sum and the path to the output
+        bw.write(dp[0][0] + "\n");
+        bw.write(path[0][0].toString() + "\n");
+        bw.flush();
     }
 }
+
+// Commit message: Read and write in console with BufferedReader and BufferedWriter, use BigInteger instead of int, use dynamic programming
