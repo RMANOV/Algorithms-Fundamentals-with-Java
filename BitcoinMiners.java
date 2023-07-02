@@ -28,19 +28,26 @@ import java.util.Scanner;
 public class BitcoinMiners {
     public static void main(String[] args) {
         Scanner scanner = new Scanner(System.in);
+        // Read the number of all transactions in the pool
         int n = Integer.parseInt(scanner.nextLine());
+        // Read the number of transactions you can pick as a miner
         int x = Integer.parseInt(scanner.nextLine());
+        // Calculate the number of ways can you select x transactions from the pool of n transactions
         System.out.println(binomialCoeff(n, x));
     }
 
+    // Calculate the binomial coefficient of n and k
     static int binomialCoeff(int n, int k) {
         int res = 1;
+        // If k is greater than n - k, swap them
         if (k > n - k)
             k = n - k;
+        // Calculate the binomial coefficient using the formula
         for (int i = 0; i < k; ++i) {
             res *= (n - i);
             res /= (i + 1);
         }
+        // Return the result
         return res;
     }
 }
